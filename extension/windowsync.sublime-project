@@ -1,0 +1,337 @@
+{
+	"auto_complete":
+	{
+		"selected_items":
+		[
+		]
+	},
+	"buffers":
+	[
+		{
+			"file": "/Users/will/Dropbox/Code/chrome extensions/server/windowmanager.php",
+			"settings":
+			{
+				"buffer_size": 1482,
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "/Users/will/Dropbox/Code/chrome extensions/extension/manifest.json",
+			"settings":
+			{
+				"buffer_size": 246,
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "/Users/will/Dropbox/Code/chrome extensions/extension/sync.coffee",
+			"settings":
+			{
+				"buffer_size": 2330,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "/Users/will/Dropbox/Code/chrome extensions/extension/sync.js",
+			"settings":
+			{
+				"buffer_size": 990,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "/Users/will/Dropbox/Code/chrome extensions/extension/sync.html",
+			"settings":
+			{
+				"buffer_size": 2591,
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "/Users/will/Dropbox/Code/chrome extensions/server/dotcloud.yml",
+			"settings":
+			{
+				"buffer_size": 16,
+				"line_ending": "Unix"
+			}
+		}
+	],
+	"build_system": "",
+	"command_palette":
+	{
+		"height": 0,
+		"selected_items":
+		[
+		],
+		"width": 0
+	},
+	"distraction_free":
+	{
+		"menu_visible": true,
+		"show_minimap": false,
+		"show_tabs": false,
+		"side_bar_visible": false,
+		"status_bar_visible": false
+	},
+	"file_history":
+	[
+		"/Users/will/android-2/src/com/bump/core/service/BumpService.scala",
+		"/Volumes/Git 1.7.6 x86_64 Snow Leopard/setup git PATH for non-terminal programs.sh",
+		"/Users/will/.profile",
+		"/Users/will/.bash_profile",
+		"/Users/will/android-2/proto/bam_actions.proto",
+		"/Users/will/android-2/proto/bam.proto",
+		"/Users/will/android-2/src/com/bump/proto/BamActions.java",
+		"/Users/will/Dropbox/Bump/Android-Bump-Station/.git/config",
+		"/Users/will/Dropbox/MIT Startup Fund/startup landing page/landingpage_files/main.js",
+		"/Users/will/Dropbox/MIT Startup Fund/startup landing page/landingpage_files/css",
+		"/Users/will/Dropbox/MIT Startup Fund/startup landing page/landingpage.html",
+		"/Users/will/Dropbox/MIT Startup Fund/startup landing page/landingpage_files/jsapi",
+		"/Users/will/Dropbox/MIT Startup Fund/startup landing page/landingpage_files/css(1)"
+	],
+	"find_in_files":
+	{
+		"include_history":
+		[
+		],
+		"location_history":
+		[
+		]
+	},
+	"find_state":
+	{
+		"case_sensitive": false,
+		"find_history":
+		[
+			"confirm"
+		],
+		"highlight": true,
+		"in_selection": false,
+		"preserve_case": false,
+		"regex": false,
+		"replace_history":
+		[
+		],
+		"reverse": false,
+		"show_context": true,
+		"use_buffer": false,
+		"whole_word": false,
+		"wrap": true
+	},
+	"groups":
+	[
+		{
+			"selected": 5,
+			"sheets":
+			[
+				{
+					"buffer": 0,
+					"file": "/Users/will/Dropbox/Code/chrome extensions/server/windowmanager.php",
+					"settings":
+					{
+						"buffer_size": 1482,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								727,
+								727
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/PHP/PHP.tmLanguage",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0,
+						"translation.y": 0,
+						"zoom_level": 1
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 1,
+					"file": "/Users/will/Dropbox/Code/chrome extensions/extension/manifest.json",
+					"settings":
+					{
+						"buffer_size": 246,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								246,
+								246
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/JavaScript/JSON.tmLanguage"
+						},
+						"translation.x": 0,
+						"translation.y": 0,
+						"zoom_level": 1
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 2,
+					"file": "/Users/will/Dropbox/Code/chrome extensions/extension/sync.coffee",
+					"settings":
+					{
+						"buffer_size": 2330,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								773,
+								773
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/wezm-coffee-script-sublime-package-eb75c45/Syntaxes/CoffeeScript.tmLanguage",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0,
+						"translation.y": 0,
+						"zoom_level": 1
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 3,
+					"file": "/Users/will/Dropbox/Code/chrome extensions/extension/sync.js",
+					"settings":
+					{
+						"buffer_size": 990,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								0,
+								0
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0,
+						"translation.y": 0,
+						"zoom_level": 1
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 4,
+					"file": "/Users/will/Dropbox/Code/chrome extensions/extension/sync.html",
+					"settings":
+					{
+						"buffer_size": 2591,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								0,
+								0
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/HTML/HTML.tmLanguage"
+						},
+						"translation.x": 0,
+						"translation.y": 0,
+						"zoom_level": 1
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 5,
+					"file": "/Users/will/Dropbox/Code/chrome extensions/server/dotcloud.yml",
+					"settings":
+					{
+						"buffer_size": 16,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								16,
+								16
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/YAML/YAML.tmLanguage"
+						},
+						"translation.x": 0,
+						"translation.y": 0,
+						"zoom_level": 1
+					},
+					"type": "text"
+				}
+			]
+		}
+	],
+	"layout":
+	{
+		"cells":
+		[
+			[
+				0,
+				0,
+				1,
+				1
+			]
+		],
+		"cols":
+		[
+			0,
+			1
+		],
+		"rows":
+		[
+			0,
+			1
+		]
+	},
+	"menu_visible": true,
+	"save_all_on_build": true,
+	"select_file":
+	{
+		"height": 0,
+		"selected_items":
+		[
+		],
+		"width": 0
+	},
+	"select_project":
+	{
+		"height": 0,
+		"selected_items":
+		[
+		],
+		"width": 0
+	},
+	"show_minimap": true,
+	"show_tabs": true,
+	"side_bar_visible": false,
+	"side_bar_width": 150,
+	"status_bar_visible": true
+}

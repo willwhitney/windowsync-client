@@ -1,0 +1,27 @@
+<html>
+
+<head>
+<script type="text/javascript" src="http://code.jquery.com/jquery-1.6.1.min.js"> </script>
+<script src="http://cdn.socket.io/stable/socket.io.js"></script>
+</head>
+
+<body>
+
+<!-- 
+<script type="text/javascript" src="sync.js"> </script>
+ -->
+<script>
+  var socket = io.connect('http://localhost');
+  socket.on('news', function (data) {
+    console.log(data);
+    socket.emit('my other event', { my: 'data' });
+  });
+</script>
+</body>
+</html>
+
+
+
+
+
+
