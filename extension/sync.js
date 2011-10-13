@@ -1,8 +1,8 @@
 (function() {
   var SERVER, socket, tablist;
-  SERVER = "http://937860c6.dotcloud.com/windowmanager.php";
+  SERVER = "http://localhost:8888";
   tablist = null;
-  socket = io.connect('http://localhost');
+  socket = io.connect(SERVER);
   socket.on('news', function(data) {
     console.log(data);
     return socket.emit('my other event', {

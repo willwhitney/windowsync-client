@@ -1,7 +1,7 @@
-SERVER = "http://937860c6.dotcloud.com/windowmanager.php"
+SERVER = "http://localhost:8888"
 tablist = null
 
-socket = io.connect('http://localhost')
+socket = io.connect(SERVER)
 socket.on('news', (data) ->
     console.log data
     socket.emit('my other event', { my: 'data' })
