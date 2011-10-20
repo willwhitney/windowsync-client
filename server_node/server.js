@@ -3,7 +3,7 @@
   http = require("http");
   url = require("url");
   socketio = require("socket.io");
-  start = function(route, handle) {
+  start = function(route, handleSocket, handle) {
     var app, io, onRequest;
     onRequest = function(request, response) {
       var pathname;
@@ -16,12 +16,7 @@
     app.listen(8888);
     console.log("server started");
     return io.sockets.on('connection', function(socket) {
-      socket.emit('news', {
-        hello: 'world'
-      });
-      return socket.on('other event', function(data) {
-        return console.log(data);
-      });
+      return handleSocket(socket);
     });
   };
   exports.start = start;

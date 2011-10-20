@@ -3,7 +3,7 @@
 <plist version="1.0">
 <dict>
 	<key>currentDocument</key>
-	<string>extension/sync.html</string>
+	<string>extension/sync.coffee</string>
 	<key>documents</key>
 	<array>
 		<dict>
@@ -35,14 +35,42 @@
 			<key>firstVisibleLine</key>
 			<integer>0</integer>
 		</dict>
+		<key>extension/popup.coffee</key>
+		<dict>
+			<key>caret</key>
+			<dict>
+				<key>column</key>
+				<integer>0</integer>
+				<key>line</key>
+				<integer>4</integer>
+			</dict>
+			<key>firstVisibleColumn</key>
+			<integer>0</integer>
+			<key>firstVisibleLine</key>
+			<integer>0</integer>
+		</dict>
+		<key>extension/popup.html</key>
+		<dict>
+			<key>caret</key>
+			<dict>
+				<key>column</key>
+				<integer>0</integer>
+				<key>line</key>
+				<integer>0</integer>
+			</dict>
+			<key>firstVisibleColumn</key>
+			<integer>0</integer>
+			<key>firstVisibleLine</key>
+			<integer>0</integer>
+		</dict>
 		<key>extension/sync.coffee</key>
 		<dict>
 			<key>caret</key>
 			<dict>
 				<key>column</key>
-				<integer>12</integer>
-				<key>line</key>
 				<integer>0</integer>
+				<key>line</key>
+				<integer>22</integer>
 			</dict>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
@@ -54,9 +82,9 @@
 			<key>caret</key>
 			<dict>
 				<key>column</key>
-				<integer>45</integer>
+				<integer>13</integer>
 				<key>line</key>
-				<integer>10</integer>
+				<integer>18</integer>
 			</dict>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
@@ -67,12 +95,14 @@
 	<key>openDocuments</key>
 	<array>
 		<string>extension/sync.coffee</string>
+		<string>extension/popup.coffee</string>
+		<string>extension/popup.html</string>
 		<string>extension/sync.html</string>
 		<string>extension/manifest.json</string>
 	</array>
 	<key>showFileHierarchyDrawer</key>
 	<false/>
 	<key>windowFrame</key>
-	<string>{{841, 0}, {599, 878}}</string>
+	<string>{{774, 0}, {666, 878}}</string>
 </dict>
 </plist>

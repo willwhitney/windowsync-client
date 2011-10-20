@@ -1,5 +1,5 @@
 (function() {
-  var fs, socket, start;
+  var fs, start;
   fs = require('fs');
   start = function(response) {
     return fs.readFile('index.html', function(err, data) {
@@ -11,9 +11,5 @@
       return response.end(data);
     });
   };
-  socket = function(response) {
-    return console.log("socket request received");
-  };
   exports.start = start;
-  exports.socket = socket;
 }).call(this);

@@ -9,11 +9,6 @@ start = (response) ->
         response.writeHead(200)
         response.end(data)
     )
-    
-socket = (response) ->
-    console.log "socket request received"
-    
-    
+        
 exports.start = start
-exports.socket = socket
 

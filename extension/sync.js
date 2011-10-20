@@ -1,27 +1,115 @@
 (function() {
-  var SERVER, socket, tablist;
+  var SERVER, addMapping, fromClientMapping, fromServerMapping, getClientId, getServerId, onTabAttachedHandler, onTabCreatedHandler, onTabDetachedHandler, onTabRemovedHandler, onTabUpdatedHandler, start, tablist;
   SERVER = "http://localhost:8888";
   tablist = null;
-  socket = io.connect(SERVER);
-  socket.on('news', function(data) {
-    console.log(data);
-    return socket.emit('my other event', {
-      my: 'data'
+  $(function() {
+    return $(window).bind('storage', function(e) {
+      console.log(e);
+      if (e.originalEvent.key === "windowId") {
+        alert("starting...");
+        return start();
+      }
     });
   });
+  fromClientMapping = {};
+  fromServerMapping = {};
+  addMapping = function(clientId, serverId) {
+    fromClientMapping[clientId] = serverId;
+    return fromServerMapping[serverId] = clientId;
+  };
+  getServerId = function(clientId) {
+    return fromClientMapping[clientId];
+  };
+  getClientId = function(serverId) {
+    return fromServerMapping[serverId];
+  };
+  start = function() {
+    var socket, _ref;
+    window.socket = io.connect(SERVER);
+    socket = (_ref = window.socket) != null ? _ref : null;
+    socket.on('tabAdded', function(data) {
+      var tab;
+      tab = eval(data);
+      tab.windowId = +localStorage['windowId'];
+      return chrome.tabs.create(tab, function(newTab) {
+        return addMapping(newTab['id'], tab['id']);
+      });
+    });
+    socket.on('tabId', function(data) {
+      return addMapping(data['clientId'], data['serverId']);
+    });
+    chrome.tabs.onDetached.addListener(onTabDetachedHandler);
+    chrome.tabs.onRemoved.addListener(onTabRemovedHandler);
+    chrome.tabs.onAttached.addListener(onTabAttachedHandler);
+    chrome.tabs.onCreated.addListener(onTabCreatedHandler);
+    return chrome.tabs.onUpdated.addListener(onTabUpdatedHandler);
+  };
+  onTabDetachedHandler = function(tabId, detachedInfo) {
+    var socket, _ref;
+    socket = (_ref = window.socket) != null ? _ref : null;
+    return chrome.tabs.get(tabId, function(tab) {
+      alert("tab detached: " + tab);
+      if (tab['windowId'] !== +localStorage['windowId']) {
+        alert("detached tab was not in correct window");
+        return;
+      }
+      return socket.emit('tabRemoved', {
+        'url': tab['url'],
+        'index': tab['index'],
+        'id': getServerId(tab['id'])
+      });
+    });
+  };
+  onTabRemovedHandler = function(tabId, removedInfo) {
+    if (!removedInfo['isWindowClosing']) {
+      return socket.emit('tabRemoved', {
+        'id': getServerId(tabId)
+      });
+    }
+  };
+  onTabCreatedHandler = function(tab) {
+    var socket, _ref;
+    socket = (_ref = window.socket) != null ? _ref : null;
+    if (tab['windowId'] !== +localStorage['windowId']) {
+      return;
+    }
+    return socket.emit('tabAdded', {
+      url: tab['url'],
+      index: tab['index'],
+      id: tab['id']
+    });
+  };
+  onTabAttachedHandler = function(tabId, addedInfo) {
+    return chrome.tabs.get(tabId, function(tab) {
+      if (tab['windowId'] !== +localStorage['window']) {
+        return;
+      }
+      return socket.emit('tabAdded', {
+        url: tab['url'],
+        index: tab['index'],
+        id: tab['id']
+      });
+    });
+  };
+  onTabUpdatedHandler = function(tabId, changeInfo) {
+    alert("tab updated");
+    if (!(changeInfo['url'] != null)) {
+      return;
+    }
+    return chrome.tabs.get(tabId, function(tab) {
+      if (tab['windowId'] !== +localStorage['windowId']) {
+        alert("updated tab in wrong window");
+        return;
+      }
+      alert("updating tab on server...");
+      return socket.emit('tabUpdated', {
+        url: tab['url'],
+        index: tab['index'],
+        id: getServerId(tab['id'])
+      });
+    });
+  };
   /*
-  $( () -> 
-  
-    $(window).bind('storage', (e) ->
-      alert('storage changed');
-      startup()
-    )
-  
-    # localStorage.setItem('a', 'test')
-  
-  );
-  
-  
   updateLocalTablist = () ->
       # alert("window #{ localStorage['window'] }")
       # alert("tabs in this window: #{ tablist }")

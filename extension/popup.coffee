@@ -1,19 +1,9 @@
 SERVER = "http://937860c6.dotcloud.com/windowmanager.php"
 
-# chrome.windows.create({url: "http://google.com/", focused: true})
+chrome.windows.create({}, (window) ->
+    localStorage['windowId'] = window['id']
 
-# socket = io.connect('http://localhost', 1337)
-# socket.on('news', (data) ->
-#     console.log data
-#     socket.emit('my other event', { my: 'data' })
-# )
-
-# chrome.windows.create({}, (window) ->
-# 	console.log "made a window"
-# 	localStorage['window'] = window
-# 	alert "made a window"
-# 	window = window['id']
-# )
+)
 
 	
 	# $.get(SERVER, {type: "get"}, (data) -> 

@@ -2,7 +2,7 @@ http = require "http"
 url = require "url"
 socketio = require("socket.io")
 
-start = (route, handle) ->
+start = (route, handleSocket, handle) ->
     onRequest = (request, response) ->
         pathname = url.parse(request.url).pathname
         console.log "request for #{pathname} received."
@@ -15,10 +15,7 @@ start = (route, handle) ->
     console.log "server started"
     
     io.sockets.on('connection', (socket) ->
-        socket.emit('news', {hello: 'world'})
-        socket.on('other event', (data) ->
-            console.log(data)
-        )
+        handleSocket(socket)
     )
     
 exports.start = start
