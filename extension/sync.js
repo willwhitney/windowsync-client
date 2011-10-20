@@ -6,7 +6,6 @@
     return $(window).bind('storage', function(e) {
       console.log(e);
       if (e.originalEvent.key === "windowId") {
-        alert("starting...");
         return start();
       }
     });
@@ -48,9 +47,7 @@
     var socket, _ref;
     socket = (_ref = window.socket) != null ? _ref : null;
     return chrome.tabs.get(tabId, function(tab) {
-      alert("tab detached: " + tab);
       if (tab['windowId'] !== +localStorage['windowId']) {
-        alert("detached tab was not in correct window");
         return;
       }
       return socket.emit('tabRemoved', {
@@ -98,10 +95,8 @@
     }
     return chrome.tabs.get(tabId, function(tab) {
       if (tab['windowId'] !== +localStorage['windowId']) {
-        alert("updated tab in wrong window");
         return;
       }
-      alert("updating tab on server...");
       return socket.emit('tabUpdated', {
         url: tab['url'],
         index: tab['index'],

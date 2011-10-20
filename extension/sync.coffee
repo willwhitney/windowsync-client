@@ -6,7 +6,7 @@ $( () ->
     $(window).bind('storage', (e) ->
         console.log(e)
         if e.originalEvent.key == "windowId"
-            alert "starting..."
+            # alert "starting..."
             start()
     )
 )
@@ -65,9 +65,9 @@ start = () ->
 onTabDetachedHandler = (tabId, detachedInfo) ->
     socket = window.socket ? null
     chrome.tabs.get(tabId, (tab) -> 
-        alert "tab detached: #{tab}"
+        # alert "tab detached: #{tab}"
         if tab['windowId'] != +localStorage['windowId']
-            alert "detached tab was not in correct window"
+            # alert "detached tab was not in correct window"
             return
         
         socket.emit('tabRemoved', { 'url': tab['url'], 'index': tab['index'], 'id': getServerId(tab['id']) })
@@ -106,9 +106,9 @@ onTabUpdatedHandler = (tabId, changeInfo) ->
 
     chrome.tabs.get(tabId, (tab) -> 
         if tab['windowId'] != +localStorage['windowId']
-            alert "updated tab in wrong window"
+            # alert "updated tab in wrong window"
             return
-        alert "updating tab on server..."
+        # alert "updating tab on server..."
         socket.emit('tabUpdated', { url: tab['url'], index: tab['index'], id: getServerId(tab['id']) })
     )
     
