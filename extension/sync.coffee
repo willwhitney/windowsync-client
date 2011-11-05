@@ -1,5 +1,7 @@
 SERVER = "http://localhost:8888"
 tablist = null
+WINDOWID = 000000
+
 
 $( () -> 
     # alert "storage watcher set"
@@ -19,6 +21,18 @@ addMapping = (clientId, serverId) ->
     fromClientMapping[clientId] = serverId
     fromServerMapping[serverId] = clientId
     
+removeMappingByClientId = (clientId) ->
+    serverId = getServerId(clientId)
+    fromClientMapping.del(clientId)
+    fromServerMapping.del(serverId)
+    return ServerId
+    
+removeMappingByServerId = (serverId) ->
+    clientId = getClientId(serverId)
+    fromClientMapping.del(clientId)
+    fromServerMapping.del(serverId)
+    return clientId
+    
 getServerId = (clientId) ->
     fromClientMapping[clientId]
     
@@ -35,14 +49,23 @@ start = () ->
     
     socket = window.socket ? null
     
-    # socket.on('news', (data) ->
-    #     console.log data
-    #     socket.emit('data event', { my: 'data' })
-    # )
+    socket.emit('getAll', WINDOWID)
+    
+    chrome.tabs.getAllInWindow(+localStorage['windowId'], (tabs) ->
+        onTabCreatedHandler(tabs[0])
+    )
 
     socket.on('tabAdded', (data) ->
-        tab = eval(data)
+        
+        # alert data
+        tab = JSON.parse(data)
+        alert getClientId(tab['id'])
+        if getClientId(tab['id'])?
+            return
+            
+        delete tab['id']
         tab.windowId = +localStorage['windowId']
+        alert tab
         
         # create the tab and map its local id to the server id
         chrome.tabs.create(tab, (newTab) ->
@@ -53,17 +76,31 @@ start = () ->
     socket.on('tabId', (data) ->
         addMapping(data['clientId'], data['serverId'])
     )
+    
+    # avoids server loopback by first removing the mapping, so onTabRemovedHandler doesn't run
+    socket.on('tabRemoved', (tab) ->
+        clientTabId = removeMappingByServerId(tab['id'])
+        chrome.tabs.remove(clientTabId)
+    )
+    
+    ###
+    socket.on('tabMoved', (tab) ->
+        clientTabId = getClientId(tab['id'])
+        chrome.tabs.move(clientTabId, {index: tab['index']}
+    )
+    ###
+    
 
     chrome.tabs.onDetached.addListener(onTabDetachedHandler)
     chrome.tabs.onRemoved.addListener(onTabRemovedHandler)
     chrome.tabs.onAttached.addListener(onTabAttachedHandler)
     chrome.tabs.onCreated.addListener(onTabCreatedHandler)
-    # chrome.tabs.onMoved.addListener(onTabMovedHandler)
+    chrome.tabs.onMoved.addListener(onTabMovedHandler)
     chrome.tabs.onUpdated.addListener(onTabUpdatedHandler)
     
 
 onTabDetachedHandler = (tabId, detachedInfo) ->
-    socket = window.socket ? null
+    # socket = window.socket ? null
     chrome.tabs.get(tabId, (tab) -> 
         # alert "tab detached: #{tab}"
         if tab['windowId'] != +localStorage['windowId']
@@ -76,15 +113,21 @@ onTabDetachedHandler = (tabId, detachedInfo) ->
 onTabRemovedHandler = (tabId, removedInfo) ->
     if not removedInfo['isWindowClosing']
         # alert "tab removed!"
-        socket.emit('tabRemoved', { 'id': getServerId(tabId) })
+        if getServerId(tabId)?
+            socket.emit('tabRemoved', { 'id': getServerId(tabId) })
 
 onTabCreatedHandler = (tab) ->
-    socket = window.socket ? null
+    # socket = window.socket ? null
     # alert "tab created: " + tab
+    
     if tab['windowId'] != +localStorage['windowId']
         # alert "tab window: #{tab['windowId']} and stored window: #{localStorage['windowId']}"
         return
 
+    #------ REMOVE THIS LATER ----------------------------------------------------------------
+    # socket.emit('getAll', WINDOWID)
+    #------ REMOVE THIS LATER ----------------------------------------------------------------    
+    
     # alert "tab window IS equal to stored window"
     socket.emit('tabAdded', { url: tab['url'], index: tab['index'], id: tab['id'] })
 
@@ -92,14 +135,14 @@ onTabCreatedHandler = (tab) ->
 onTabAttachedHandler = (tabId, addedInfo) ->
 
     chrome.tabs.get(tabId, (tab) ->
-        if tab['windowId'] != +localStorage['window']
+        if tab['windowId'] != +localStorage['windowId']
             return
         socket.emit('tabAdded', { url: tab['url'], index: tab['index'], id: tab['id'] })
     )
     
 onTabUpdatedHandler = (tabId, changeInfo) -> 
 
-    alert "tab updated"
+    # alert "tab updated"
 
     if not changeInfo['url']?
         return
@@ -112,9 +155,18 @@ onTabUpdatedHandler = (tabId, changeInfo) ->
         socket.emit('tabUpdated', { url: tab['url'], index: tab['index'], id: getServerId(tab['id']) })
     )
     
+onTabMovedHandler = (tabId, moveInfo) -> 
+
+    chrome.tabs.get(tabId, (tab) -> 
+        if tab['windowId'] != +localStorage['windowId']
+            alert "wrong window!"
+            return
+        socket.emit('tabMoved', {url: tab['url'], index: tab['toIndex'], oldIndex: moveInfo['fromIndex'], id: getServerId(tabId)})
+    )
+    
 ###
 updateLocalTablist = () ->
-    # alert("window #{ localStorage['window'] }")
+    # ("window #{ localStorage['window'] }")
     # alert("tabs in this window: #{ tablist }")
 
     try

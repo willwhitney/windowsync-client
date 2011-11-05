@@ -1,6 +1,12 @@
 (function() {
-  var fs, start;
+  var WINDOWID, fs, redclient, redis, start;
   fs = require('fs');
+  redis = require("redis");
+  redclient = redis.createClient();
+  WINDOWID = 000000;
+  redclient.on("error", function(err) {
+    return console.log("redis error: " + err);
+  });
   start = function(response) {
     return fs.readFile('index.html', function(err, data) {
       if (err) {

@@ -1,6 +1,15 @@
 fs = require 'fs'
+redis = require "redis"
+redclient = redis.createClient()
+WINDOWID = 000000
 
-start = (response) ->
+redclient.on("error", (err) ->
+    console.log "redis error: " + err
+)
+
+start = (response) ->    
+    
+
     fs.readFile('index.html', (err, data) ->
         if (err) 
             response.writeHead(500)
@@ -9,6 +18,7 @@ start = (response) ->
         response.writeHead(200)
         response.end(data)
     )
+
         
 exports.start = start
 
