@@ -1,7 +1,16 @@
 (function() {
-  var SERVER;
+  var SERVER, newWindow, oldWindow;
   SERVER = "http://937860c6.dotcloud.com/windowmanager.php";
-  chrome.windows.create({}, function(window) {
-    return localStorage['windowId'] = window['id'];
-  });
+  newWindow = function() {
+    return chrome.windows.create({}, function(window) {
+      localstorage['serverWindowId'] = null;
+      return localStorage['windowId'] = window['id'];
+    });
+  };
+  oldWindow = function() {
+    return chrome.windows.create({}, function(window) {
+      localstorage['serverWindowId'] = null;
+      return localStorage['windowId'] = window['id'];
+    });
+  };
 }).call(this);

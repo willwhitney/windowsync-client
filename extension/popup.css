@@ -1,0 +1,15 @@
+.create_window {
+    display:inline-block;
+}
+
+body {
+    width:220px
+}
+
+#window_id {
+    display:block;
+}
+
+#resume {
+    display:block;
+}

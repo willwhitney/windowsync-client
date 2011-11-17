@@ -1,9 +1,18 @@
 SERVER = "http://937860c6.dotcloud.com/windowmanager.php"
 
-chrome.windows.create({}, (window) ->
-    localStorage['windowId'] = window['id']
+newWindow = () ->
+    chrome.windows.create({}, (window) ->
+        localstorage['serverWindowId'] = null
+        localStorage['windowId'] = window['id']
+    )
 
-)
+oldWindow = () ->
+    chrome.windows.create({}, (window) ->
+        localstorage['serverWindowId'] = null
+        localStorage['windowId'] = window['id']
+    )
+    
+
 
 	
 	# $.get(SERVER, {type: "get"}, (data) -> 

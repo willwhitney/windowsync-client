@@ -1,7 +1,6 @@
 fs = require 'fs'
 redis = require "redis"
 redclient = redis.createClient()
-WINDOWID = 000000
 
 redclient.on("error", (err) ->
     console.log "redis error: " + err

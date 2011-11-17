@@ -1,12 +1,15 @@
 redis = require "redis"
 redclient = redis.createClient()
-WINDOWID = 000000
 
 redclient.on("error", (err) ->
     console.log "redis error: " + err
 )
 
 
+guidGenerator = () -> 
+    S4 = () ->
+       return (((1+Math.random())*0x10000)|0).toString(16).substring(1)
+    return (S4()+S4()+"-"+S4()+"-"+S4()+"-"+S4()+"-"+S4()+S4()+S4())
 
 # redclient.rpush("window", 0000, redis.print)
 # redclient.rpush("window", 0001, redis.print)
@@ -38,7 +41,11 @@ handleSocket = (socket) ->
 
     
     # socket.emit('news', { hello: 'world' })
-        
+    
+    socket.on('makeWindowId', () ->
+        socket.emit('windowId', {'windowId': guidGenerator() } )
+    )
+    
     socket.on('tabAdded', (tab) ->  
         
         console.log "tab added:"
@@ -46,19 +53,19 @@ handleSocket = (socket) ->
 
         id = tab['id']
         
-        redclient.set(id, JSON.stringify(tab), redis.print)
+        redclient.set(tab['windowId'] + ":" + id, JSON.stringify(tab), redis.print)
         console.log "tab index: #{tab['index']}"
-        redclient.lindex(WINDOWID, tab['index'], (error, result) ->
+        redclient.lindex(tab['windowId'], tab['index'], (error, result) ->
             console.log "currently at that index: #{result}"
             if result?
                 console.log "inserting before result: #{result}"
-                redclient.linsert(WINDOWID, 'BEFORE', result, id, redis.print)
+                redclient.linsert(tab['windowId'], 'BEFORE', result, id, redis.print)
             else
                 console.log "inserting at the end."
-                redclient.rpush(WINDOWID, id, redis.print)
+                redclient.rpush(tab['windowId'], id, redis.print)
         )
         
-        redclient.lrange(WINDOWID, 0, 10000, redis.print)
+        redclient.lrange(tab['windowId'], 0, 10000, redis.print)
         
         # redclient.zadd(WINDOWID, tab['index'], tab['id'], redis.print)
             
@@ -74,9 +81,9 @@ handleSocket = (socket) ->
         console.log "tab removed:"
         console.log tab
         
-        redclient.del(tab['id'], redis.print)
+        redclient.del(tab['windowId'] + ":" + id, redis.print)
         
-        redclient.lrem(WINDOWID, 1, tab['id'], redis.print)
+        redclient.lrem(tab['windowId'], 1, tab['id'], redis.print)
         
         socket.broadcast.emit('tabRemoved', tab)
         
@@ -88,7 +95,7 @@ handleSocket = (socket) ->
         console.log "tab updated:"
         console.log tab
         
-        redclient.set(tab['id'], JSON.stringify(tab), redis.print)
+        redclient.set(tab['windowId'] + ":" + tab['id'], JSON.stringify(tab), redis.print)
         
         socket.broadcast.emit('tabUpdated', tab)
     )
@@ -99,18 +106,18 @@ handleSocket = (socket) ->
         
         id = tab['id']
         
-        redclient.set(id, JSON.stringify(tab), redis.print)
+        redclient.set(tab['windowId'] + ":" + tab['id'], JSON.stringify(tab), redis.print)
                 
-        redclient.lrem(WINDOWID, 1, tab['id'], redis.print)
+        redclient.lrem(tab['windowId'], 1, tab['id'], redis.print)
         
-        redclient.lindex(WINDOWID, tab['index'], (error, result) ->
+        redclient.lindex(tab['windowId'], tab['index'], (error, result) ->
             console.log "currently at that index: #{result}"
             if result?
                 console.log "inserting before result: #{result}"
-                redclient.linsert(WINDOWID, 'BEFORE', result, id, redis.print)
+                redclient.linsert(tab['windowId'], 'BEFORE', result, id, redis.print)
             else
                 console.log "inserting at the end."
-                redclient.rpush(WINDOWID, id, redis.print)
+                redclient.rpush(tab['windowId'], id, redis.print)
         )
         
         socket.broadcast.emit('tabMoved', tab)
@@ -122,7 +129,7 @@ handleSocket = (socket) ->
         redclient.lrange(windowId, 0, -1, (err, res) ->
             for key of res
                 console.log "tab id: " + res[key]
-                redclient.get(res[key], (err2, res2) ->
+                redclient.get(windowId + ":" + res[key], (err2, res2) ->
                     console.log "tab data: " 
                     console.log res2
                     socket.emit('tabAdded', res2)
