@@ -1,0 +1,37 @@
+<head>
+<script type="text/javascript" src="http://code.jquery.com/jquery-1.6.1.min.js"></script>  
+<script src="http://127.0.0.1:1337/socket.io/socket.io.js"></script>
+<!-- <script type="text/javascript" src="popup.js"></script> -->
+<link rel="stylesheet" href="popup.css">
+</head>
+
+<body>
+
+<script type="text/javascript">
+newWindow = function() {
+  chrome.windows.create({}, function(window) {
+    localstorage['serverWindowId'] = null;
+    localStorage['windowId'] = window['id'];
+  });
+};
+
+oldWindow = function() {
+  chrome.windows.create({}, function(window) {
+    alert("callback!");
+    localStorage['windowId'] = window['id'];
+  });
+};
+
+</script>
+
+<div id="new_window" class="create_window">
+  <button id="make_new" onClick="newWindow();">New session</button>
+</div>
+
+<div id="existing_window" class="create_window">
+  <input type="text" id="window_id" />
+  <button id="resume" onClick="oldWindow();">Resume session</button>
+</div>
+
+
+</body>
