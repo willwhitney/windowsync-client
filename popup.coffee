@@ -1,17 +1,34 @@
-SERVER = "http://937860c6.dotcloud.com/windowmanager.php"
 
 newWindow = () ->
-    chrome.windows.create({}, (window) ->
-        localstorage['serverWindowId'] = null
-        localStorage['windowId'] = window['id']
+    # alert "pre-callback"
+    
+    chrome.extension.sendRequest({type: "createWindow", newWindow: true}, (response) ->
+        console.log(response)
     )
 
-oldWindow = () ->
+    ###
     chrome.windows.create({}, (window) ->
         localstorage['serverWindowId'] = null
         localStorage['windowId'] = window['id']
     )
+    ###
+
+oldWindow = () ->
     
+    chrome.extension.sendRequest({type: "createWindow", newWindow: false, windowId: $('#window_id').val() }, (response) ->
+        console.log(response)
+    )
+    ###
+    chrome.windows.create({}, (window) ->
+        localStorage['windowId'] = window['id']
+    )
+    ###
+    
+window.newWindow = newWindow
+window.oldWindow = oldWindow
+
+
+
 
 
 	

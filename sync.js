@@ -1,14 +1,20 @@
 (function() {
   var SERVER, addTabMapping, fromClientTabMapping, fromServerTabMapping, getClientTabId, getServerTabId, onTabAttachedHandler, onTabCreatedHandler, onTabDetachedHandler, onTabMovedHandler, onTabRemovedHandler, onTabUpdatedHandler, removeTabMappingByClientId, removeTabMappingByServerId, start;
   SERVER = "http://localhost:8888";
-  $(function() {
-    return $(window).bind('storage', function(e) {
-      console.log(e);
-      if (e.originalEvent.key === "windowId") {
-        alert("starting...");
-        return start();
-      }
-    });
+  chrome.extension.onRequest.addListener(function(request, sender, sendResponse) {
+    if (request.type = "createWindow") {
+      return chrome.windows.create({}, function(window) {
+        localStorage['windowId'] = window['id'];
+        start();
+        if (request.newWindow) {
+          socket.emit('makeWindowId');
+          return localStorage['serverWindowId'] = null;
+        } else {
+          localStorage['serverWindowId'] = request.windowId;
+          return socket.emit('getAll', localStorage['serverWindowId']);
+        }
+      });
+    }
   });
   fromClientTabMapping = {};
   fromServerTabMapping = {};
@@ -65,33 +71,29 @@
     var socket, _ref;
     window.socket = io.connect(SERVER);
     socket = (_ref = window.socket) != null ? _ref : null;
-    if (localstorage['serverWindowId'] != null) {
-      socket.emit('getAll', localstorage['serverWindowId']);
-    }
     chrome.tabs.getAllInWindow(+localStorage['windowId'], function(tabs) {
-      return onTabCreatedHandler(tabs[0]);
+      if (tabs[0] != null) {
+        return onTabCreatedHandler(tabs[0]);
+      }
     });
     socket.on('tabAdded', function(data) {
-      var tab;
+      var serverTabId, tab;
       tab = JSON.parse(data);
-      alert(getClientTabId(tab['id']));
       if (getClientTabId(tab['id']) != null) {
         return;
       }
+      serverTabId = tab['id'];
       delete tab['id'];
       tab.windowId = +localStorage['windowId'];
-      alert(tab);
       return chrome.tabs.create(tab, function(newTab) {
-        return addTabMapping(newTab['id'], tab['id']);
+        return addTabMapping(newTab['id'], serverTabId);
       });
     });
     socket.on('tabId', function(data) {
       return addTabMapping(data['clientId'], data['serverId']);
     });
     socket.on('windowId', function(data) {
-      if (!(localstorage['serverWindowId'] != null)) {
-        return localstorage['serverWindowId'] = data['windowId'];
-      }
+      return localStorage['serverWindowId'] = data['windowId'];
     });
     socket.on('tabRemoved', function(tab) {
       var clientTabId;
@@ -106,7 +108,9 @@
       });
     });
     socket.on('tabUpdated', function(tab) {
-      return chrome.tabs.update(getClientTabId, {
+      var clientTabId;
+      clientTabId = getClientTabId(tab['id']);
+      return chrome.tabs.update(clientTabId, {
         url: tab['url']
       });
     });
@@ -123,7 +127,7 @@
         return;
       }
       return socket.emit('tabRemoved', {
-        'windowId': localstorage['serverWindowId'],
+        'windowId': localStorage['serverWindowId'],
         'url': tab['url'],
         'index': tab['index'],
         'id': getServerTabId(tab['id'])
@@ -134,7 +138,7 @@
     if (!removedInfo['isWindowClosing']) {
       if (getServerTabId(tabId) != null) {
         return socket.emit('tabRemoved', {
-          'windowId': localstorage['serverWindowId'],
+          'windowId': localStorage['serverWindowId'],
           'id': getServerTabId(tabId)
         });
       }
@@ -145,7 +149,7 @@
       return;
     }
     return socket.emit('tabAdded', {
-      'windowId': localstorage['serverWindowId'],
+      'windowId': localStorage['serverWindowId'],
       url: tab['url'],
       index: tab['index'],
       id: tab['id']
@@ -157,7 +161,7 @@
         return;
       }
       return socket.emit('tabAdded', {
-        'windowId': localstorage['serverWindowId'],
+        'windowId': localStorage['serverWindowId'],
         url: tab['url'],
         index: tab['index'],
         id: tab['id']
@@ -173,7 +177,7 @@
         return;
       }
       return socket.emit('tabUpdated', {
-        'windowId': localstorage['serverWindowId'],
+        'windowId': localStorage['serverWindowId'],
         url: tab['url'],
         index: tab['index'],
         id: getServerTabId(tab['id'])
@@ -187,7 +191,7 @@
         return;
       }
       return socket.emit('tabMoved', {
-        'windowId': localstorage['serverWindowId'],
+        'windowId': localStorage['serverWindowId'],
         url: tab['url'],
         index: tab['toIndex'],
         oldIndex: moveInfo['fromIndex'],

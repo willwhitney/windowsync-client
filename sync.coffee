@@ -1,13 +1,34 @@
+# SERVER = "http://strong-mist-1633.herokuapp.com"
 SERVER = "http://localhost:8888"
 
-$( () -> 
-    # alert "storage watcher set"
-    $(window).bind('storage', (e) ->
-        console.log(e)
-        if e.originalEvent.key == "windowId"
-            alert "starting..."
+# $( () -> 
+#     # alert "storage watcher set"
+#     $(window).bind('storage', (e) ->
+#         console.log(e)
+#         if e.originalEvent.key == "windowId"
+#             alert "starting..."
+#             start()
+#     )
+# )
+
+chrome.extension.onRequest.addListener( (request, sender, sendResponse) ->
+    # alert "got a message!"
+
+    if request.type = "createWindow"
+
+        # alert "making a window"
+        chrome.windows.create({}, (window) ->
+            # alert "made a window"
+            localStorage['windowId'] = window['id']
             start()
-    )
+            if request.newWindow
+                socket.emit('makeWindowId')
+                localStorage['serverWindowId'] = null
+            else
+                localStorage['serverWindowId'] = request.windowId
+                socket.emit('getAll', localStorage['serverWindowId'])
+        )
+
 )
 
 #----------------------------------------------------------------------
@@ -77,31 +98,32 @@ start = () ->
     # alert "Started up!"
     
     window.socket = io.connect(SERVER)
+    # alert "socket: " + window.socket
     socket = window.socket ? null
-    
-    if localstorage['serverWindowId']?
-        socket.emit('getAll', localstorage['serverWindowId'])
-    
-    
+
+        
     chrome.tabs.getAllInWindow(+localStorage['windowId'], (tabs) ->
-        onTabCreatedHandler(tabs[0])
+        if tabs[0]?
+            onTabCreatedHandler(tabs[0])
     )
 
     socket.on('tabAdded', (data) ->
         
         # alert data
         tab = JSON.parse(data)
-        alert getClientTabId(tab['id'])
+        # alert getClientTabId(tab['id'])
         if getClientTabId(tab['id'])?
             return
             
+        serverTabId = tab['id']
+            
         delete tab['id']
         tab.windowId = +localStorage['windowId']
-        alert tab
+        # alert tab
         
         # create the tab and map its local id to the server id
         chrome.tabs.create(tab, (newTab) ->
-            addTabMapping(newTab['id'], tab['id'])
+            addTabMapping(newTab['id'], serverTabId)
         )
     )
     
@@ -110,11 +132,9 @@ start = () ->
     )
     
     socket.on('windowId', (data) ->
-        if !localstorage['serverWindowId']?
-            localstorage['serverWindowId'] = data['windowId']
+        localStorage['serverWindowId'] = data['windowId']
     )
     
-    # avoids server loopback by first removing the mapping, so onTabRemovedHandler doesn't run
     socket.on('tabRemoved', (tab) ->
         clientTabId = removeTabMappingByServerId(tab['id'])
         chrome.tabs.remove(clientTabId)
@@ -127,7 +147,8 @@ start = () ->
     )
     
     socket.on('tabUpdated', (tab) ->
-        chrome.tabs.update(getClientTabId, {url: tab['url']})
+        clientTabId = getClientTabId(tab['id'])
+        chrome.tabs.update(clientTabId, {url: tab['url']})
     )
     
     
@@ -148,14 +169,14 @@ onTabDetachedHandler = (tabId, detachedInfo) ->
             # alert "detached tab was not in correct window"
             return
         
-        socket.emit('tabRemoved', { 'windowId': localstorage['serverWindowId'], 'url': tab['url'], 'index': tab['index'], 'id': getServerTabId(tab['id']) })
+        socket.emit('tabRemoved', { 'windowId': localStorage['serverWindowId'], 'url': tab['url'], 'index': tab['index'], 'id': getServerTabId(tab['id']) })
     )
     
 onTabRemovedHandler = (tabId, removedInfo) ->
     if not removedInfo['isWindowClosing']
         # alert "tab removed!"
         if getServerTabId(tabId)?
-            socket.emit('tabRemoved', { 'windowId': localstorage['serverWindowId'], 'id': getServerTabId(tabId) })
+            socket.emit('tabRemoved', { 'windowId': localStorage['serverWindowId'], 'id': getServerTabId(tabId) })
 
 onTabCreatedHandler = (tab) ->
     # socket = window.socket ? null
@@ -170,7 +191,7 @@ onTabCreatedHandler = (tab) ->
     #------ REMOVE THIS LATER ----------------------------------------------------------------    
     
     # alert "tab window IS equal to stored window"
-    socket.emit('tabAdded', { 'windowId': localstorage['serverWindowId'], url: tab['url'], index: tab['index'], id: tab['id'] })
+    socket.emit('tabAdded', { 'windowId': localStorage['serverWindowId'], url: tab['url'], index: tab['index'], id: tab['id'] })
 
 
 onTabAttachedHandler = (tabId, addedInfo) ->
@@ -178,7 +199,7 @@ onTabAttachedHandler = (tabId, addedInfo) ->
     chrome.tabs.get(tabId, (tab) ->
         if tab['windowId'] != +localStorage['windowId']
             return
-        socket.emit('tabAdded', { 'windowId': localstorage['serverWindowId'], url: tab['url'], index: tab['index'], id: tab['id'] })
+        socket.emit('tabAdded', { 'windowId': localStorage['serverWindowId'], url: tab['url'], index: tab['index'], id: tab['id'] })
     )
     
 onTabUpdatedHandler = (tabId, changeInfo) -> 
@@ -193,7 +214,7 @@ onTabUpdatedHandler = (tabId, changeInfo) ->
             # alert "updated tab in wrong window"
             return
         # alert "updating tab on server..."
-        socket.emit('tabUpdated', { 'windowId': localstorage['serverWindowId'], url: tab['url'], index: tab['index'], id: getServerTabId(tab['id']) })
+        socket.emit('tabUpdated', { 'windowId': localStorage['serverWindowId'], url: tab['url'], index: tab['index'], id: getServerTabId(tab['id']) })
     )
     
 onTabMovedHandler = (tabId, moveInfo) -> 
@@ -202,7 +223,7 @@ onTabMovedHandler = (tabId, moveInfo) ->
         if tab['windowId'] != +localStorage['windowId']
             alert "wrong window!"
             return
-        socket.emit('tabMoved', {'windowId': localstorage['serverWindowId'], url: tab['url'], index: tab['toIndex'], oldIndex: moveInfo['fromIndex'], id: getServerTabId(tabId)})
+        socket.emit('tabMoved', {'windowId': localStorage['serverWindowId'], url: tab['url'], index: tab['toIndex'], oldIndex: moveInfo['fromIndex'], id: getServerTabId(tabId)})
     )
     
 ###
