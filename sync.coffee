@@ -250,7 +250,7 @@ onTabMovedHandler = (tabId, moveInfo) ->
 
     chrome.tabs.get(tabId, (tab) -> 
         if tab['windowId'] != +localStorage['windowId']
-            alert "wrong window!"
+            # alert "wrong window!"
             return
         socket.emit('tabMoved', {'windowId': localStorage['serverWindowId'], url: tab['url'], index: moveInfo['toIndex'], oldIndex: moveInfo['fromIndex'], id: getServerTabId(tabId)})
     )

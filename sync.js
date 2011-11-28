@@ -223,7 +223,6 @@
   onTabMovedHandler = function(tabId, moveInfo) {
     return chrome.tabs.get(tabId, function(tab) {
       if (tab['windowId'] !== +localStorage['windowId']) {
-        alert("wrong window!");
         return;
       }
       return socket.emit('tabMoved', {
